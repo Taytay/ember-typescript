@@ -1,0 +1,37 @@
+{
+  "name": "ynab-shared-library",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "karma start ./tests/karma-config.js",
+    "build": "./compile.sh",
+    "install": "napa"
+  },
+  "dependencies": {
+    "jquery": "^2.1.1",
+    "lodash": "~3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "1.4.1",
+    "mocha": "^1.20.1",
+    "chai": "^1.9.1",
+    "karma": "^0.12.16",
+    "karma-mocha": "~0.1.1",
+    "karma-chrome-launcher": "^0.1.2",
+    "karma-script-launcher": "^0.1.0",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-jasmine": "^0.1.5",
+    "karma-requirejs": "^0.2.1",
+    "karma-sourcemap-loader": "^0.1.1",
+    "karma-cli": "0.0.4",
+    "karma-spec-reporter": "0.0.13",
+    "napa": "^1.0.1"
+  },
+  "engines": {
+    "node": "0.10.26",
+    "npm": "1.4.2"
+  },
+  "napa": {
+    "ember": "components/ember#1.10.0"
+  }
+}
