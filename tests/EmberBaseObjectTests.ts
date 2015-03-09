@@ -41,15 +41,95 @@ module ynab.tests {
 
     }
 
+    class Person extends ynab.common.EmberBaseObject {
+
+        public static create(initialValues?: {}): Person {
+            return this.createInstance<Person>(initialValues);
+        }
+
+        private firstName: string = null;
+        public getFirstName(): string { return this.get('firstName'); }
+        public setFirstName(value: string): void { this.set('firstName', value); }
+
+        private lastName: string = null;
+        public getLastName(): string { return this.get('lastName'); }
+        public setLastName(value: string): void { this.set('lastName', value); }
+
+        // The function that actually does the computing
+        // Ember makes sure this is only called as often as is necesary
+        private fullName(): string {
+            return `${this.getFirstName()} ${this.getLastName()}`;
+        }
+
+        // This is the function you'll call from typescript
+        public getFullName() : string{
+            // By using the get method, Ember will cache this value for us
+            // and only recaclulate it if it changes
+            return this.get('fullName');
+        }
+
+        protected static emberPrototypeConstructor() {
+
+            var prototype: Person = (<typeof Person>this).prototype;
+            // Tell Ember that the fullName property depends upon the firstName and lastName properties
+            prototype.fullName = (<any>prototype.fullName.property("firstName", "lastName")).readOnly();
+        }
+    }
+
     export class EmberBaseObjectTests {
 
         public static performTests(): void {
 
             var expect = chai.expect;
 
+            it("Should allow properties to be initialized in the object constructor.", function() {
+
+                var tom = Person.create({ firstName: 'Tom', lastName: 'Dale' });
+
+                expect(tom.get('firstName')).to.equal('Tom');
+                expect(tom.get('lastName')).to.equal('Dale');
+
+                expect(tom.get('fullName')).to.equal('Tom Dale');
+            });
+
+            it("Should allow computed properties to work.", function() {
+
+                var person = Person.create({});
+
+                person.setFirstName('Yehuda');
+                person.setLastName('Katz');
+                // First, expect this property to just be what it was initialized as
+                expect(person.getFirstName()).to.equal('Yehuda');
+                expect(person.getLastName()).to.equal('Katz');
+
+                expect(person.getFullName()).to.equal('Yehuda Katz');
+
+                expect(person.setFirstName('Taylor'));
+                expect(person.getFullName()).to.equal('Taylor Katz');
+
+                expect(person.setLastName('Brown'));
+                expect(person.getFullName()).to.equal('Taylor Brown');
+            });
+
+            it("Should allow for the basic get and set method to work.", function() {
+
+                var person = Person.create({ firstName: 'Yehuda', lastName: 'Katz' });
+
+                expect(person.get('firstName')).to.equal('Yehuda');
+                expect(person.get('lastName')).to.equal('Katz');
+
+                expect(person.get('fullName')).to.equal('Yehuda Katz');
+
+                expect(person.set('firstName', 'Taylor'));
+                expect(person.get('fullName')).to.equal('Taylor Katz');
+
+                expect(person.set('lastName', 'Brown'));
+                expect(person.get('fullName')).to.equal('Taylor Brown');
+            });
+
             // This won't work until this bug is addressed by the Ember team:
             // https://github.com/emberjs/ember.js/issues/10252
-            it.skip("Ember itself should allow for properties to be defined and watched, even if the property is set at creation time.", function() {
+            it.skip("Ember itself should allow for properties to be defined and watched, even if the property is set at creation time. (Skipped until issue 10252 is fixed in Ember)", function() {
 
                 var Person = Ember.Object.extend({
                     // these will be supplied by `create`
@@ -89,7 +169,6 @@ module ynab.tests {
                 person.set('lastName', 'Foo');
                 expect(person.get('fullName')).to.equal('Yehuda Foo');
             });
-
 
             it("Should allow for string properties to be defined and watched, even if the property is first set the EmberBaseObject/Typescript way.", function() {
 
