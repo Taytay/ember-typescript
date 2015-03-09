@@ -2,7 +2,7 @@
 Ember-Typescript
 ====================
 
-Allows you to use Typescript's Object Model (and subsequent strong typing guarantees), without having to give up on Ember.Objects.
+Define Ember.Objects using Typescript's class syntax. Now you have type-safe Ember.Objects.
 
 ## Requirements:
 
